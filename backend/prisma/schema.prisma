@@ -1,0 +1,286 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                Int        @id @default(autoincrement())
+  nom               String
+  email             String     @unique
+  motDePasse        String     @map("mot_de_passe")
+  telephone         String?
+  photoProfil       String?    @map("photo_profil")
+  dateCreation      DateTime   @default(now()) @map("date_creation")
+  derniereConnexion DateTime?  @map("derniere_connexion")
+  role              Role
+  client            Client?
+  documents         Document[]
+  hote              Hote?
+  auditLogs         AuditLog[]
+  messagesEnvoyes   Message[]  @relation("MessagesEnvoyes")
+  messagesRecus     Message[]  @relation("MessagesRecus")
+
+  @@map("users")
+}
+
+model Client {
+  userId                  Int                     @id @map("user_id")
+  profession              String?
+  biographie              String?
+  avis                    Avis[]
+  user                    User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  participationsActivites ParticipationActivite[]
+  reservations            Reservation[]
+  documentRequests        DocumentRequest[]
+
+  @@map("clients")
+}
+
+model Hote {
+  userId    Int        @id @map("user_id")
+  ribBanque String?    @map("rib_banque")
+  colivings Coliving[]
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documentRequests DocumentRequest[]
+
+  @@map("hotes")
+}
+
+model Document {
+  id             Int              @id @default(autoincrement())
+  userId         Int              @map("user_id")
+  type           String
+  fichier        String
+  dateSoumission DateTime         @default(now()) @map("date_soumission")
+  statut         StatutValidation @default(EN_ATTENTE)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documentRequest DocumentRequest?
+
+  @@map("documents")
+}
+
+model Coliving {
+  id              Int                  @id @default(autoincrement())
+  hoteId          Int                  @map("hote_id")
+  titre           String
+  description     String?
+  adresse         String
+  latitude        Float?
+  longitude       Float?
+  lienGoogleMap   String?              @map("lien_google_map")
+  regles          String?
+  statut          StatutValidation     @default(EN_ATTENTE)
+  dateCreation    DateTime             @default(now()) @map("date_creation")
+  activites       Activite[]
+  avis            Avis[]
+  chambres        Chambre[]
+  equipementLinks ColivingEquipement[]
+  hote            Hote                 @relation(fields: [hoteId], references: [userId], onDelete: Cascade)
+  images          Image[]
+  messages        Message[]
+
+  @@map("colivings")
+}
+
+model ColivingEquipement {
+  colivingId   Int        @map("coliving_id")
+  equipementId Int        @map("equipement_id")
+  coliving     Coliving   @relation(fields: [colivingId], references: [id], onDelete: Cascade)
+  equipement   Equipement @relation(fields: [equipementId], references: [id], onDelete: Cascade)
+
+  @@id([colivingId, equipementId])
+  @@map("coliving_equipements")
+}
+
+model Image {
+  id           Int      @id @default(autoincrement())
+  colivingId   Int      @map("coliving_id")
+  url          String
+  isPrincipale Boolean  @default(false) @map("is_principale")
+  ordre        Int      @default(0)
+  coliving     Coliving @relation(fields: [colivingId], references: [id], onDelete: Cascade)
+
+  @@map("images")
+}
+
+model Chambre {
+  id                Int           @id @default(autoincrement())
+  colivingId        Int           @map("coliving_id")
+  nom               String
+  description       String?
+  capacitePersonnes Int           @map("capacite_personnes")
+  litsDisponibles   Int           @map("lits_disponibles")
+  prixParMois       Decimal       @map("prix_par_mois") @db.Decimal(10, 2)
+  typeChambre       TypeChambre   @map("type_chambre")
+  coliving          Coliving      @relation(fields: [colivingId], references: [id], onDelete: Cascade)
+  reservations      Reservation[]
+
+  @@map("chambres")
+}
+
+model Equipement {
+  id            Int                  @id @default(autoincrement())
+  nom           String               @unique
+  icone         String?
+  colivingLinks ColivingEquipement[]
+
+  @@map("equipements")
+}
+
+model Activite {
+  id             Int                     @id @default(autoincrement())
+  colivingId     Int                     @map("coliving_id")
+  titre          String
+  description    String?
+  datePrevue     DateTime                @map("date_prevue")
+  prixOptionnel  Decimal                 @default(0.00) @map("prix_optionnel") @db.Decimal(10, 2)
+  typeActivite   TypeActivite            @map("type_activite")
+  coliving       Coliving                @relation(fields: [colivingId], references: [id], onDelete: Cascade)
+  participations ParticipationActivite[]
+
+  @@map("activites")
+}
+
+model ParticipationActivite {
+  clientId        Int      @map("client_id")
+  activiteId      Int      @map("activite_id")
+  dateInscription DateTime @default(now()) @map("date_inscription")
+  activite        Activite @relation(fields: [activiteId], references: [id], onDelete: Cascade)
+  client          Client   @relation(fields: [clientId], references: [userId], onDelete: Cascade)
+
+  @@id([clientId, activiteId])
+  @@map("participations_activites")
+}
+
+model Reservation {
+  id              Int               @id @default(autoincrement())
+  clientId        Int               @map("client_id")
+  chambreId       Int               @map("chambre_id")
+  dateDebut       DateTime          @map("date_debut") @db.Date
+  dateFin         DateTime          @map("date_fin") @db.Date
+  nombrePersonnes Int               @map("nombre_personnes")
+  prixTotal       Decimal           @map("prix_total") @db.Decimal(10, 2)
+  statut          StatutReservation @default(EN_ATTENTE)
+  dateCreation    DateTime          @default(now()) @map("date_creation")
+  paiement        Paiement?
+  chambre         Chambre           @relation(fields: [chambreId], references: [id])
+  client          Client            @relation(fields: [clientId], references: [userId], onDelete: Cascade)
+
+  @@map("reservations")
+}
+
+model Paiement {
+  id            Int             @id @default(autoincrement())
+  reservationId Int             @unique @map("reservation_id")
+  montant       Decimal         @db.Decimal(10, 2)
+  methode       MethodePaiement
+  devise        String          @default("MAD")
+  datePaiement  DateTime?       @map("date_paiement")
+  statut        StatutPaiement  @default(EN_ATTENTE)
+  reservation   Reservation     @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  @@map("paiements")
+}
+
+model Avis {
+  id           Int      @id @default(autoincrement())
+  clientId     Int      @map("client_id")
+  colivingId   Int      @map("coliving_id")
+  note         Int?
+  commentaire  String?
+  dateCreation DateTime @default(now()) @map("date_creation")
+  client       Client   @relation(fields: [clientId], references: [userId], onDelete: Cascade)
+  coliving     Coliving @relation(fields: [colivingId], references: [id], onDelete: Cascade)
+
+  @@map("avis")
+}
+
+enum Role {
+  CLIENT
+  HOTE
+  ADMIN
+}
+
+enum StatutValidation {
+  EN_ATTENTE
+  VALIDE
+  REFUSE
+}
+
+enum StatutReservation {
+  EN_ATTENTE
+  CONFIRMEE
+  ANNULEE
+}
+
+enum StatutPaiement {
+  EN_ATTENTE
+  PAYE
+  ECHOUE
+}
+
+enum TypeChambre {
+  PRIVEE
+  PARTAGEE_DORTOIR
+}
+
+enum MethodePaiement {
+  VIREMENT
+  ESPECE
+  CARTE_BANCAIRE
+  PAYPAL
+}
+
+enum TypeActivite {
+  SPORT_SURF
+  BIEN_ETRE_YOGA
+  WORKSHOP
+  EXCURSION
+  SOIREE_SOCIALE
+}
+
+model AuditLog {
+  id           Int      @id @default(autoincrement())
+  userId       Int?     @map("user_id")
+  action       String
+  details      String?  @db.Text
+  dateCreation DateTime @default(now()) @map("date_creation")
+
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+}
+
+model Message {
+  id             Int       @id @default(autoincrement())
+  expediteurId   Int       @map("expediteur_id")
+  destinataireId Int       @map("destinataire_id")
+  colivingId     Int?      @map("coliving_id")
+  contenu        String
+  dateEnvoi      DateTime  @default(now()) @map("date_envoi")
+  lu             Boolean   @default(false)
+
+  expediteur     User      @relation("MessagesEnvoyes", fields: [expediteurId], references: [id], onDelete: Cascade)
+  destinataire   User      @relation("MessagesRecus", fields: [destinataireId], references: [id], onDelete: Cascade)
+  coliving       Coliving? @relation(fields: [colivingId], references: [id], onDelete: SetNull)
+
+  @@map("messages")
+}
+
+model DocumentRequest {
+  id          Int              @id @default(autoincrement())
+  hoteId      Int              @map("hote_id")
+  clientId    Int              @map("client_id")
+  documentId  Int?             @unique @map("document_id")
+  statut      StatutValidation @default(EN_ATTENTE)
+  dateDemande DateTime         @default(now()) @map("date_demande")
+
+  hote        Hote             @relation(fields: [hoteId], references: [userId], onDelete: Cascade)
+  client      Client           @relation(fields: [clientId], references: [userId], onDelete: Cascade)
+  document    Document?        @relation(fields: [documentId], references: [id], onDelete: SetNull)
+
+  @@map("document_requests")
+}

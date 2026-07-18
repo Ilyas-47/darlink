@@ -1,0 +1,216 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CLIENT
+  HOTE
+  ADMIN
+}
+
+enum StatutValidation {
+  EN_ATTENTE
+  VALIDE
+  REFUSE
+}
+
+enum StatutReservation {
+  EN_ATTENTE
+  CONFIRMEE
+  ANNULEE
+}
+
+enum StatutPaiement {
+  EN_ATTENTE
+  PAYE
+  ECHOUE
+}
+
+enum TypeChambre {
+  PRIVEE
+  PARTAGEE_DORTOIR
+}
+
+enum MethodePaiement {
+  VIREMENT
+  ESPECE
+}
+
+enum TypeActivite {
+  SPORT_SURF
+  BIEN_ETRE_YOGA
+  WORKSHOP
+  EXCURSION
+  SOIREE_SOCIALE
+}
+
+model User {
+  id                Int       @id @default(autoincrement())
+  nom               String
+  email             String    @unique
+  motDePasse        String
+  telephone         String?
+  photoProfil       String?
+  dateCreation      DateTime  @default(now())
+  derniereConnexion DateTime?
+  role              Role
+
+  client Client?
+  hote   Hote?
+  documents Document[]
+}
+
+model Client {
+  userId     Int    @id
+  profession String?
+  biographie String?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  reservations            Reservation[]
+  avis                    Avis[]
+  participationsActivites ParticipationActivite[]
+}
+
+model Hote {
+  userId    Int    @id
+  ribBanque String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  colivings Coliving[]
+}
+
+model Document {
+  id             Int              @id @default(autoincrement())
+  userId         Int
+  type           String
+  fichier        String
+  dateSoumission DateTime         @default(now())
+  statut         StatutValidation @default(EN_ATTENTE)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Coliving {
+  id             Int              @id @default(autoincrement())
+  hoteId         Int
+  titre          String
+  description    String?
+  adresse        String
+  lienGoogleMap  String?
+  regles         String?
+  statut         StatutValidation @default(EN_ATTENTE)
+  dateCreation   DateTime         @default(now())
+
+  hote Hote @relation(fields: [hoteId], references: [userId], onDelete: Cascade)
+
+  chambres    Chambre[]
+  images      Image[]
+  equipements Equipement[] @relation("ColivingEquipements")
+  activites   Activite[]
+  avis        Avis[]
+}
+
+model Image {
+  id           Int     @id @default(autoincrement())
+  colivingId   Int
+  url          String
+  isPrincipale Boolean @default(false)
+  ordre        Int     @default(0)
+
+  coliving Coliving @relation(fields: [colivingId], references: [id], onDelete: Cascade)
+}
+
+model Chambre {
+  id                Int         @id @default(autoincrement())
+  colivingId        Int
+  nom               String
+  description       String?
+  capacitePersonnes Int
+  litsDisponibles   Int
+  prixParMois       Decimal     @db.Decimal(10, 2)
+  typeChambre       TypeChambre
+
+  coliving Coliving @relation(fields: [colivingId], references: [id], onDelete: Cascade)
+
+  reservations Reservation[]
+}
+
+model Equipement {
+  id    Int     @id @default(autoincrement())
+  nom   String  @unique
+  icone String?
+
+  colivings Coliving[] @relation("ColivingEquipements")
+}
+
+model Activite {
+  id            Int          @id @default(autoincrement())
+  colivingId    Int
+  titre         String
+  description   String?
+  datePrevue    DateTime
+  prixOptionnel Decimal      @default(0.00) @db.Decimal(10, 2)
+  typeActivite  TypeActivite
+
+  coliving Coliving @relation(fields: [colivingId], references: [id], onDelete: Cascade)
+
+  participations ParticipationActivite[]
+}
+
+model ParticipationActivite {
+  clientId        Int
+  activiteId      Int
+  dateInscription DateTime @default(now())
+
+  client   Client   @relation(fields: [clientId], references: [userId], onDelete: Cascade)
+  activite Activite @relation(fields: [activiteId], references: [id], onDelete: Cascade)
+
+  @@id([clientId, activiteId])
+}
+
+model Reservation {
+  id              Int               @id @default(autoincrement())
+  clientId        Int
+  chambreId       Int
+  dateDebut       DateTime          @db.Date
+  dateFin         DateTime          @db.Date
+  nombrePersonnes Int
+  prixTotal       Decimal           @db.Decimal(10, 2)
+  statut          StatutReservation @default(EN_ATTENTE)
+  dateCreation    DateTime          @default(now())
+
+  client  Client  @relation(fields: [clientId], references: [userId], onDelete: Cascade)
+  chambre Chambre @relation(fields: [chambreId], references: [id], onDelete: Restrict)
+
+  paiement Paiement?
+}
+
+model Paiement {
+  id             Int             @id @default(autoincrement())
+  reservationId  Int             @unique
+  montant        Decimal         @db.Decimal(10, 2)
+  methode        MethodePaiement
+  devise         String          @default("MAD")
+  datePaiement   DateTime?
+  statut         StatutPaiement  @default(EN_ATTENTE)
+
+  reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+}
+
+model Avis {
+  id           Int      @id @default(autoincrement())
+  clientId     Int
+  colivingId   Int
+  note         Int?     
+  commentaire  String?
+  dateCreation DateTime @default(now())
+
+  client   Client   @relation(fields: [clientId], references: [userId], onDelete: Cascade)
+  coliving Coliving @relation(fields: [colivingId], references: [id], onDelete: Cascade)
+}
