@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Globe, Shield, Users, Zap, Target, MapPin, Briefcase, Code, PenTool, MessageCircle } from 'lucide-react';
-import ilyasImage from '../../assets/images/ilyashm.jpeg';
+import iliasImage from '../../assets/images/ilias.jpeg';
+import amineImage from '../../assets/images/amine.jpeg';
 import islamImage from '../../assets/images/islam.jpeg';
 import redaImage from '../../assets/images/reda.jpeg';
 
@@ -22,10 +23,10 @@ const stats = [
 ];
 
 const team = [
-  { name: 'Ilyas Hmimsa', role: 'CEO & Développeur Full Stack', icon: <Briefcase size={20} />, image: ilyasImage },
-  { name: 'Ilyas Hmimsa', role: 'Développeur Frontend', icon: <PenTool size={20} />, image: ilyasImage },
+  { name: 'Ilias', role: 'CEO & Développeur Full Stack', icon: <Briefcase size={20} />, image: iliasImage },
+  { name: 'Mohammed Amine Essadi', role: 'Développeur Frontend', icon: <PenTool size={20} />, image: amineImage },
   { name: 'Islam Saidi', role: 'Développeur Backend', icon: <Code size={20} />, image: islamImage },
-  { name: 'Reda Bakri', role: 'Management & Social Media', icon: <MessageCircle size={20} />, image: redaImage },
+  { name: 'Reda Bakri', role: 'Base de données et Social Media', icon: <MessageCircle size={20} />, image: redaImage },
 ];
 
 const listVariants = {
