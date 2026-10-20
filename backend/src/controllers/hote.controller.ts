@@ -4,6 +4,7 @@ import { prisma } from '../config/db';
 import { TypeChambre } from '@prisma/client';
 
 const chambreInput = z.object({
+  id: z.coerce.number().int().positive().optional(),
   nom: z.string().min(1),
   description: z.string().optional(),
   capacitePersonnes: z.coerce.number().int().positive(),
@@ -269,45 +270,116 @@ export const updateColiving = async (req: Request, res: Response) => {
     const lienGoogleMap =
       parsed.lienGoogleMap && parsed.lienGoogleMap.length > 0 ? parsed.lienGoogleMap : undefined;
 
-    // Transaction pour mettre à jour la propriété, vider les anciens équipements/images et recréer
-    await prisma.$transaction([
-      prisma.colivingEquipement.deleteMany({ where: { colivingId } }),
-      prisma.image.deleteMany({ where: { colivingId } }),
-      prisma.chambre.deleteMany({ where: { colivingId } }),
-      prisma.coliving.update({
-        where: { id: colivingId },
-        data: {
-          titre: parsed.titre,
-          description: parsed.description,
-          adresse: parsed.adresse,
-          lienGoogleMap,
-          regles: parsed.regles,
-          statut: 'EN_ATTENTE', // Soumis de nouveau pour approbation de l'admin
-          ...(parsed.equipementIds.length > 0 && {
-            equipementLinks: {
-              create: parsed.equipementIds.map((equipementId) => ({ equipementId })),
-            },
-          }),
-          images: {
-            create: parsed.imageUrls.map((url, idx) => ({
-              url,
-              isPrincipale: idx === 0,
-              ordre: idx,
-            })),
+    // Transaction pour mettre à jour la propriété, les équipements, images et chambres de manière sûre
+    await prisma.$transaction(async (tx) => {
+      // 1. Équipements
+      await tx.colivingEquipement.deleteMany({ where: { colivingId } });
+      if (parsed.equipementIds.length > 0) {
+        await tx.colivingEquipement.createMany({
+          data: parsed.equipementIds.map((equipementId) => ({
+            colivingId,
+            equipementId,
+          })),
+        });
+      }
+
+      // 2. Images
+      await tx.image.deleteMany({ where: { colivingId } });
+      if (parsed.imageUrls.length > 0) {
+        await tx.image.createMany({
+          data: parsed.imageUrls.map((url, idx) => ({
+            colivingId,
+            url,
+            isPrincipale: idx === 0,
+            ordre: idx,
+          })),
+        });
+      }
+
+      // 3. Gestion sécurisée des chambres (ne supprime pas les chambres ayant des réservations)
+      const existingChambres = await tx.chambre.findMany({
+        where: { colivingId },
+        include: {
+          _count: {
+            select: { reservations: true },
           },
-          chambres: {
-            create: parsed.chambres.map((c) => ({
+        },
+      });
+
+      const matchedChambreIds = new Set<number>();
+
+      for (const c of parsed.chambres) {
+        let matched = null;
+
+        // Si un ID explicite est fourni et existe déjà pour ce coliving
+        if (c.id) {
+          matched = existingChambres.find((ec) => ec.id === c.id);
+        }
+
+        // Sinon, associer à une chambre existante non encore appariée
+        if (!matched) {
+          matched = existingChambres.find((ec) => !matchedChambreIds.has(ec.id));
+        }
+
+        if (matched) {
+          matchedChambreIds.add(matched.id);
+          await tx.chambre.update({
+            where: { id: matched.id },
+            data: {
               nom: c.nom,
               description: c.description,
               capacitePersonnes: c.capacitePersonnes,
               litsDisponibles: c.litsDisponibles,
               prixParMois: c.prixParMois,
               typeChambre: c.typeChambre as TypeChambre,
-            })),
-          },
+            },
+          });
+        } else {
+          // Nouvelle chambre
+          await tx.chambre.create({
+            data: {
+              colivingId,
+              nom: c.nom,
+              description: c.description,
+              capacitePersonnes: c.capacitePersonnes,
+              litsDisponibles: c.litsDisponibles,
+              prixParMois: c.prixParMois,
+              typeChambre: c.typeChambre as TypeChambre,
+            },
+          });
+        }
+      }
+
+      // Supprimer les chambres retirées SEULEMENT si elles n'ont aucune réservation
+      for (const ec of existingChambres) {
+        if (!matchedChambreIds.has(ec.id)) {
+          if (ec._count.reservations === 0) {
+            await tx.chambre.delete({ where: { id: ec.id } });
+          } else {
+            // Conserver pour garantir l'intégrité référentielle des réservations existantes
+            await tx.chambre.update({
+              where: { id: ec.id },
+              data: { litsDisponibles: 0 },
+            });
+          }
+        }
+      }
+
+      // 4. Mettre à jour le coliving
+      await tx.coliving.update({
+        where: { id: colivingId },
+        data: {
+          titre: parsed.titre,
+          description: parsed.description,
+          adresse: parsed.adresse,
+          ...(parsed.latitude !== undefined && { latitude: parsed.latitude }),
+          ...(parsed.longitude !== undefined && { longitude: parsed.longitude }),
+          lienGoogleMap,
+          regles: parsed.regles,
+          statut: 'EN_ATTENTE', // Soumis de nouveau pour approbation de l'admin
         },
-      }),
-    ]);
+      });
+    });
 
     res.json({
       message: 'Coliving modifié avec succès et soumis pour nouvelle approbation.',

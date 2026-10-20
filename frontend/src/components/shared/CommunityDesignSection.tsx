@@ -80,7 +80,7 @@ const CommunityDesignSection: React.FC = () => {
             }}>
               <img
                 src="src/assets/images/riad_maroc.jpg"
-                alt="Riad interior"
+                alt="Intérieur du riad"
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
@@ -96,7 +96,7 @@ const CommunityDesignSection: React.FC = () => {
             }}>
               <img
                 src="src/assets/images/riad_maroc.jpg"
-                alt="Workspace"
+                alt="Espace de travail"
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
@@ -135,8 +135,8 @@ const CommunityDesignSection: React.FC = () => {
               fontFamily: 'Outfit, sans-serif'
             }}
           >
-            Un Design conçu pour <br />
-            <span style={{ color: '#DD7246', textShadow: '0 0 30px rgba(221,114,70,0.2)' }}>le Focus.</span>
+            Un Design pensé pour <br />
+            <span style={{ color: '#DD7246', textShadow: '0 0 30px rgba(221,114,70,0.2)' }}>la Concentration.</span>
           </h2>
           <p style={{ fontSize: '1.05rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.75, marginBottom: '36px' }}>
             Chaque espace Darlink est conçu avec soin pour maximiser votre productivité tout en vous plongeant dans l'esthétique marocaine contemporaine.

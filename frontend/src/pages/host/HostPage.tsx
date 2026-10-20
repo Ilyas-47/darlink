@@ -87,7 +87,6 @@ const HostPage: React.FC = () => {
   const pendingPropCount = properties.filter(p => p.statut === 'EN_ATTENTE').length;
   const pendingResCount = reservations.filter(r => r.statut === 'EN_ATTENTE').length;
   const confirmedResCount = reservations.filter(r => r.statut === 'CONFIRMEE').length;
-  const avgRating = 4.2; // TODO: calculate from actual reviews
 
   const handleDecision = async (id: number, decision: 'confirm' | 'reject') => {
     setActionId(id);
@@ -121,7 +120,7 @@ const HostPage: React.FC = () => {
         {/* Page heading */}
         <div style={{ marginBottom: '24px' }}>
           <p style={{ fontSize: '0.72rem', fontWeight: 700, color: '#DD7246', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 4px' }}>
-            {me.nom} · Host Dashboard
+            {me.nom} · Tableau de bord Hôte
           </p>
           <h1 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#1A1A2E', margin: 0, letterSpacing: '-0.4px' }}>
             Voici l'activité sur vos espaces aujourd'hui.

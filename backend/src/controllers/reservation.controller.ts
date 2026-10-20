@@ -48,7 +48,7 @@ export const createReservation = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'La date de fin doit être après la date de début' });
     }
 
-    const overlap = await prisma.reservation.findFirst({
+    const overlapping = await prisma.reservation.findMany({
       where: {
         chambreId: chambre.id,
         statut: { in: ['EN_ATTENTE', 'CONFIRMEE'] },
@@ -56,8 +56,23 @@ export const createReservation = async (req: Request, res: Response) => {
       },
     });
 
-    if (overlap) {
-      return res.status(409).json({ error: 'Ces dates ne sont plus disponibles pour cette chambre' });
+    const totalBookedPersons = overlapping.reduce(
+      (sum, r) => sum + r.nombrePersonnes,
+      0
+    );
+    const capacity = Math.max(chambre.capacitePersonnes, chambre.litsDisponibles, 1);
+
+    if (chambre.typeChambre === 'PRIVEE' && chambre.capacitePersonnes <= 1) {
+      if (overlapping.length > 0) {
+        return res.status(409).json({ error: 'Cette chambre privée n\'est plus disponible sur ces dates' });
+      }
+    } else {
+      if (totalBookedPersons + body.nombrePersonnes > capacity) {
+        const remaining = Math.max(0, capacity - totalBookedPersons);
+        return res.status(409).json({
+          error: `Capacité insuffisante sur ces dates (${remaining} place(s) disponible(s))`,
+        });
+      }
     }
 
     const nights = nightsBetween(dateDebut, dateFin);
@@ -165,9 +180,16 @@ export const listMyReservations = async (req: Request, res: Response) => {
             coliving: {
               include: {
                 images: { orderBy: { ordre: 'asc' }, take: 1 },
-              }
-            }
-          }
+                hote: {
+                  include: {
+                    user: {
+                      select: { id: true, nom: true },
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
         paiement: true,
       },
@@ -187,6 +209,8 @@ export const listMyReservations = async (req: Request, res: Response) => {
           titre: r.chambre.coliving.titre,
           adresse: r.chambre.coliving.adresse,
           image: r.chambre.coliving.images[0]?.url ?? null,
+          hoteId: r.chambre.coliving.hote?.user?.id ?? r.chambre.coliving.hoteId,
+          hoteNom: r.chambre.coliving.hote?.user?.nom ?? 'Hôte',
         },
         chambre: { id: r.chambre.id, nom: r.chambre.nom },
         paiement: r.paiement

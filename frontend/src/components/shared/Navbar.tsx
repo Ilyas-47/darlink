@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X, User } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { darlinkApi } from '../../services/darlinkApi';
@@ -6,9 +6,9 @@ import { getStoredUser } from '../../config/api';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 const NAV_LINKS = [
-  { to: '/destinations', label: 'Explore' },
-  { to: '/community',   label: 'Community' },
-  { to: '/about',       label: 'About' },
+  { to: '/destinations', label: 'Explorer' },
+  { to: '/community',   label: 'Communauté' },
+  { to: '/about',       label: 'À propos' },
 ];
 
 const Navbar = () => {
@@ -42,7 +42,7 @@ const Navbar = () => {
 
   const dashboardLink =
     userRole === 'ADMIN' ? { to: '/admin',   label: 'Admin' } :
-    userRole === 'HOTE'  ? { to: '/host',    label: 'Dashboard' } :
+    userRole === 'HOTE'  ? { to: '/host',    label: 'Tableau de bord' } :
                            { to: '/profile', label: 'Réservations' };
 
   const isActive = (to: string) =>
@@ -215,7 +215,7 @@ const Navbar = () => {
                             onMouseOver={e => e.currentTarget.style.backgroundColor = '#FAFAF9'}
                             onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
                           >
-                            Dashboard
+                            Tableau de bord
                           </Link>
                         </DropdownMenu.Item>
                         <DropdownMenu.Separator style={{ height: '1px', backgroundColor: '#F0EDE8', margin: '4px' }} />

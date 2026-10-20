@@ -24,7 +24,7 @@ const Footer = () => {
     ],
     hotes: [
       { to: '/host-register', label: 'Devenir Hôte' },
-      { to: '/host', label: 'Dashboard Hôte' },
+      { to: '/host', label: 'Tableau de bord Hôte' },
       { to: '/about#hosting-guide', label: "Guide d'hébergement" },
     ],
     apropos: [

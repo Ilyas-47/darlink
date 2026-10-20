@@ -41,6 +41,7 @@ export default function AddListingModal({ isOpen, onClose, onSuccess, colivingId
   const [selectedEquipementIds, setSelectedEquipementIds] = useState<number[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [apiError, setApiError] = useState('');
+  const [existingChambres, setExistingChambres] = useState<any[]>([]);
 
   const [property, setProperty] = useState<PropertyData>({
     name: '',
@@ -69,6 +70,7 @@ export default function AddListingModal({ isOpen, onClose, onSuccess, colivingId
           .then((data: any) => {
             if (data) {
               const chambres = data.chambres || [];
+              setExistingChambres(chambres);
               const priceVal = chambres.length > 0 ? Number(chambres[0].prixParMois) : Number(data.prixParMois || 2500);
               const roomsVal = chambres.length > 0 ? Number(chambres[0].litsDisponibles) : 1;
               const capVal = chambres.length > 0 ? Number(chambres[0].capacitePersonnes) : Number(data.capacite || 2);
@@ -131,6 +133,7 @@ export default function AddListingModal({ isOpen, onClose, onSuccess, colivingId
           imageUrls: property.images,
           chambres: [
             {
+              ...(existingChambres[0]?.id ? { id: existingChambres[0].id } : {}),
               nom: 'Chambre principale',
               description: `${property.rooms} chambre(s) — capacité ${property.capacity} pers.`,
               capacitePersonnes: Math.max(1, property.capacity),

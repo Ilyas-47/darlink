@@ -54,12 +54,12 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
   return (
     <>
       <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1A1A2E', marginBottom: '6px', letterSpacing: '-0.4px' }}>
-        Create your account
+        Créez votre compte
       </h2>
       <p style={{ fontSize: '0.88rem', color: '#9CA3AF', marginBottom: '28px' }}>
-        Already have an account?{' '}
+        Vous avez déjà un compte ?{' '}
         <span onClick={onSwitchToLogin} style={{ color: '#DD7246', cursor: 'pointer', fontWeight: 600 }}>
-          Log in
+          Se connecter
         </span>
       </p>
 
@@ -71,7 +71,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
               name="firstName"
               control={control}
               render={({ field }) => (
-                <FormInput label="First Name" placeholder="your first name" {...field} />
+                <FormInput label="Prénom" placeholder="Votre prénom" {...field} />
               )}
             />
             {errors.firstName && <span className="text-red-500 text-xs mt-1 block">{errors.firstName.message}</span>}
@@ -81,7 +81,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
               name="lastName"
               control={control}
               render={({ field }) => (
-                <FormInput label="Last Name" placeholder="your last name" {...field} />
+                <FormInput label="Nom" placeholder="Votre nom" {...field} />
               )}
             />
             {errors.lastName && <span className="text-red-500 text-xs mt-1 block">{errors.lastName.message}</span>}
@@ -93,7 +93,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
             name="email"
             control={control}
             render={({ field }) => (
-              <FormInput icon={<Mail size={16} />} label="Email Address" type="email" placeholder="enter your email" {...field} />
+              <FormInput icon={<Mail size={16} />} label="Adresse e-mail" type="email" placeholder="Entrez votre adresse e-mail" {...field} />
             )}
           />
           {errors.email && <span className="text-red-500 text-xs mt-1 block">{errors.email.message}</span>}
@@ -101,7 +101,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-            Account Type
+            Type de compte
           </label>
           <div style={{ display: 'flex', gap: '10px' }}>
             {(['CLIENT', 'HOTE'] as const).map(r => (
@@ -131,7 +131,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-            Password
+            Mot de passe
           </label>
           <Controller
             name="password"
@@ -154,20 +154,21 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
               )}
             />
             <span>
-              I agree to Darlink's{' '}
-              <a href="#" style={{ color: '#DD7246', fontWeight: 600 }}>Terms of Service</a>
-              {' '}and{' '}
-              <a href="#" style={{ color: '#DD7246', fontWeight: 600 }}>Privacy Policy</a>.
+              J'accepte les{' '}
+              <a href="#" style={{ color: '#DD7246', fontWeight: 600 }}>Conditions d'utilisation</a>
+              {' '}et la{' '}
+              <a href="#" style={{ color: '#DD7246', fontWeight: 600 }}>Politique de confidentialité</a>
+              {' '}de Darlink.
             </span>
           </label>
           {errors.acceptTerms && <span className="text-red-500 text-xs mt-1 block">{errors.acceptTerms.message}</span>}
         </div>
 
-        <SubmitButton submitting={isSubmitting} label="Create Account" />
+        <SubmitButton submitting={isSubmitting} label="Créer un compte" />
 
         <p style={{ textAlign: 'center', fontSize: '0.82rem', color: '#9CA3AF', margin: '4px 0 0' }}>
-          Need assistance?{' '}
-          <a href="#" style={{ color: '#DD7246', fontWeight: 600 }}>Contact Support</a>
+          Besoin d'aide ?{' '}
+          <a href="#" style={{ color: '#DD7246', fontWeight: 600 }}>Contacter le support</a>
         </p>
       </form>
     </>

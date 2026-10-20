@@ -4,6 +4,7 @@ import { darlinkApi } from '../../services/darlinkApi';
 import { setAuthSession, getAuthToken, getImageUrl } from '../../config/api';
 import ClientDocumentRequests from '../../components/shared/ClientDocumentRequests';
 import HostMessages from '../../components/host/HostMessages';
+import ContactHostModal from '../../components/host/ContactHostModal';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import styles from '../../styles/UserProfilePage.module.css';
 
@@ -20,6 +21,9 @@ interface UserProfile {
 
 interface Booking {
   id: number;
+  colivingId?: number;
+  hoteId?: number;
+  hoteName?: string;
   propertyName: string;
   location: string;
   checkIn: string;
@@ -50,18 +54,33 @@ export default function UserProfilePage() {
   const [paymentMethod, setPaymentMethod] = useState<'PAYPAL' | 'CARTE_BANCAIRE' | 'ESPECE'>('PAYPAL');
   const [processingPayment, setProcessingPayment] = useState(false);
 
+  // Contact Host Modal state
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [selectedHostForContact, setSelectedHostForContact] = useState<{
+    hostId: number;
+    hostName: string;
+    colivingId?: number;
+  } | null>(null);
+
   const fetchBookingsData = async () => {
     try {
       const res = await darlinkApi.listMyReservations();
       setBookings(res.map((r: any) => ({
         id: r.id,
+        colivingId: r.coliving?.id,
+        hoteId: r.coliving?.hoteId,
+        hoteName: r.coliving?.hoteNom,
         propertyName: r.coliving?.titre || r.chambre?.coliving?.titre || 'Espace inconnu',
         location: r.coliving?.adresse || r.chambre?.coliving?.adresse || 'Adresse inconnue',
         checkIn: String(r.dateDebut).slice(0,10),
         checkOut: String(r.dateFin).slice(0,10),
         price: Number(r.prixTotal),
         status: r.statut,
-        image: r.chambre?.coliving?.images?.[0]?.url ? getImageUrl(r.chambre.coliving.images[0].url) : 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop',
+        image: r.chambre?.coliving?.images?.[0]?.url 
+          ? getImageUrl(r.chambre.coliving.images[0].url) 
+          : r.coliving?.image
+            ? getImageUrl(r.coliving.image)
+            : 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500&h=300&fit=crop',
         paiement: r.paiement
       })));
     } catch (e) {
@@ -362,7 +381,24 @@ export default function UserProfilePage() {
                               <Activity size={16} /> Paiement : {getStatusText(booking.paiement.statut)}
                             </div>
                           )}
-                          <button className={styles.messageIconButton}><MessageCircle size={20}/></button>
+                          <button 
+                            onClick={() => {
+                              if (booking.hoteId) {
+                                setSelectedHostForContact({
+                                  hostId: booking.hoteId,
+                                  hostName: booking.hoteName || 'l\'hôte',
+                                  colivingId: booking.colivingId,
+                                });
+                                setContactModalOpen(true);
+                              } else {
+                                setActiveTab('messages');
+                              }
+                            }}
+                            className={styles.messageIconButton}
+                            title="Contacter l'hôte"
+                          >
+                            <MessageCircle size={20}/>
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -492,6 +528,19 @@ export default function UserProfilePage() {
             )}
           </div>
         </div>
+      )}
+
+      {selectedHostForContact && (
+        <ContactHostModal
+          isOpen={contactModalOpen}
+          onClose={() => {
+            setContactModalOpen(false);
+            setSelectedHostForContact(null);
+          }}
+          hostId={selectedHostForContact.hostId}
+          hostName={selectedHostForContact.hostName}
+          colivingId={selectedHostForContact.colivingId}
+        />
       )}
     </div>
   );

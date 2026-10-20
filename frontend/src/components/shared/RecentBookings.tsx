@@ -65,7 +65,7 @@ const RecentBookings: React.FC<RecentBookingsProps> = ({ reservations, actionId,
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 18px', borderBottom: '1px solid #F0EDE8' }}>
         <h3 style={{ fontSize: '0.92rem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>
-          {limit ? 'Recent Bookings' : 'All Bookings'}
+          {limit ? 'Réservations Récentes' : 'Toutes les Réservations'}
         </h3>
       </div>
 

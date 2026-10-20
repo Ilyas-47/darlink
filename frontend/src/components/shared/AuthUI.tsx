@@ -152,7 +152,7 @@ export const PasswordStrengthBar: React.FC<PasswordStrengthBarProps> = ({ passwo
         ))}
       </div>
       <p style={{ fontSize: '0.72rem', color: colors[strength - 1] || '#9CA3AF', margin: 0 }}>
-        Must be at least 6 characters long with a mix of letters and numbers.
+        Doit contenir au moins 6 caractères avec un mélange de lettres et de chiffres.
       </p>
     </div>
   );
@@ -195,7 +195,7 @@ interface DividerProps {
   label?: string;
 }
 
-export const Divider: React.FC<DividerProps> = ({ label = 'OR CONTINUE WITH' }) => (
+export const Divider: React.FC<DividerProps> = ({ label = 'OU CONTINUER AVEC' }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '4px 0' }}>
     <div style={{ flex: 1, height: '1px', backgroundColor: '#E5E7EB' }} />
     <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.06em', whiteSpace: 'nowrap' }}>

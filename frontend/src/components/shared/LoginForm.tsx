@@ -42,10 +42,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
   return (
     <>
       <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1A1A2E', marginBottom: '6px', letterSpacing: '-0.4px' }}>
-        Welcome back
+        Bon retour
       </h2>
       <p style={{ fontSize: '0.88rem', color: '#9CA3AF', marginBottom: '28px' }}>
-        Please enter your details to sign in to your account.
+        Veuillez entrer vos identifiants pour vous connecter à votre compte.
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -56,9 +56,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
             render={({ field }) => (
               <FormInput
                 icon={<Mail size={16} />}
-                label="Email Address"
+                label="Adresse e-mail"
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Entrez votre adresse e-mail"
                 {...field}
               />
             )}
@@ -69,13 +69,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-              Password
+              Mot de passe
             </label>
             <button
               type="button"
               style={{ background: 'none', border: 'none', fontSize: '0.8rem', color: '#DD7246', fontWeight: 600, cursor: 'pointer' }}
             >
-              Forgot password?
+              Mot de passe oublié ?
             </button>
           </div>
           <Controller
@@ -94,18 +94,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
 
         <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.85rem', color: '#6B7280' }}>
           <CustomCheckbox checked={remember} onChange={() => setRemember(v => !v)} />
-          Keep me signed in
+          Se souvenir de moi
         </label>
 
-        <SubmitButton submitting={isSubmitting} label="Sign in" />
+        <SubmitButton submitting={isSubmitting} label="Se connecter" />
 
         <p style={{ textAlign: 'center', fontSize: '0.85rem', color: '#9CA3AF', margin: '4px 0 0' }}>
-          Don't have an account?{' '}
+          Vous n'avez pas de compte ?{' '}
           <span
             onClick={onSwitchToSignup}
             style={{ color: '#DD7246', cursor: 'pointer', fontWeight: 700 }}
           >
-            Register now
+            Inscrivez-vous maintenant
           </span>
         </p>
       </form>

@@ -21,7 +21,7 @@ interface PropertyAboutProps {
   goodForTags?: string[];
 }
 
-const GOOD_FOR_TAGS = ['Digital Nomads', 'Remote Workers', 'Entrepreneurs', 'Freelancers', 'Groups', 'Solo Travelers'];
+const GOOD_FOR_TAGS = ['Nomades digitaux', 'Télétravailleurs', 'Entrepreneurs', 'Freelances', 'Groupes', 'Voyageurs solos'];
 
 const PropertyAbout: React.FC<PropertyAboutProps> = ({ description, rooms, onBook, goodForTags = GOOD_FOR_TAGS }) => {
   const [expandedRoom, setExpandedRoom] = useState<number | null>(null);
@@ -35,7 +35,7 @@ const PropertyAbout: React.FC<PropertyAboutProps> = ({ description, rooms, onBoo
       {/* About */}
       <section style={{ marginBottom: '32px' }}>
         <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1A1A2E', marginBottom: '12px' }}>
-          About this sanctuary
+          À propos de cet espace
         </h2>
         <p style={{ fontSize: '0.93rem', color: '#6B7280', lineHeight: 1.8, marginBottom: isLong ? '8px' : 0 }}>
           {showFullDesc || !isLong ? description : `${shortDesc}…`}

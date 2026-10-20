@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Home, Calendar,
-  DollarSign, BarChart3, Plus, LogOut, FileText, MessageSquare
+  DollarSign, Plus, LogOut, FileText, MessageSquare
 } from 'lucide-react';
 import { clearAuthSession } from '../../config/api';
 

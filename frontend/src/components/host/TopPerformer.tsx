@@ -29,7 +29,7 @@ const TopPerformer: React.FC<TopPerformerProps> = ({ coliving }) => {
       {/* Header */}
       <div style={{ padding: '16px 18px', borderBottom: '1px solid #F0EDE8' }}>
         <h3 style={{ fontSize: '0.92rem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>
-          Top Performer
+          Meilleure Performance
         </h3>
       </div>
 
@@ -54,7 +54,7 @@ const TopPerformer: React.FC<TopPerformerProps> = ({ coliving }) => {
               color: 'white', borderRadius: '8px', padding: '4px 9px',
               fontSize: '0.7rem', fontWeight: 700,
             }}>
-              95% Occupancy
+              95% d'occupation
             </div>
           </div>
 
@@ -74,7 +74,7 @@ const TopPerformer: React.FC<TopPerformerProps> = ({ coliving }) => {
             </div>
 
             <p style={{ fontSize: '0.8rem', color: '#9CA3AF', margin: '0 0 12px', lineHeight: 1.55 }}>
-              Located in the heart of {coliving.adresse?.split(',')[0]}, this riad has seen a 40% revenue increase since professional verification. Leading in 'Digital Nomad' amenity scores.
+              Situé au cœur de {coliving.adresse?.split(',')[0]}, cet espace a enregistré une hausse de revenus de 40% depuis sa vérification. Numéro un pour les équipements adaptés aux nomades digitaux.
             </p>
 
             {/* Stats row */}
@@ -85,7 +85,7 @@ const TopPerformer: React.FC<TopPerformerProps> = ({ coliving }) => {
             }}>
               <div>
                 <p style={{ fontSize: '0.68rem', color: '#9CA3AF', margin: '0 0 2px', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>
-                  Bookings
+                  Réservations
                 </p>
                 <p style={{ fontSize: '1rem', fontWeight: 800, color: '#1A1A2E', margin: 0 }}>
                   {coliving.reviews || 124}
@@ -93,7 +93,7 @@ const TopPerformer: React.FC<TopPerformerProps> = ({ coliving }) => {
               </div>
               <div>
                 <p style={{ fontSize: '0.68rem', color: '#9CA3AF', margin: '0 0 2px', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>
-                  Rating
+                  Note
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <Star size={13} fill="#DD7246" color="#DD7246" />

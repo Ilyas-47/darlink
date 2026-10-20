@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Star, Heart, Wifi, Users, BedDouble } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { getImageUrl } from '../../config/api';
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } }
 };
@@ -91,7 +91,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, featured = false 
                 letterSpacing: '0.04em',
               }}
             >
-              ⭐ Top rated
+              ⭐ Mieux noté
             </span>
           )}
         </div>

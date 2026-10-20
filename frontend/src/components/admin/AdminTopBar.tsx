@@ -12,10 +12,10 @@ const AdminTopBar: React.FC = () => {
       {/* Title */}
       <div>
         <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1A1A2E', letterSpacing: '-0.5px', margin: 0, marginBottom: '4px' }}>
-          Admin Overview
+          Vue d'ensemble Admin
         </h1>
         <p style={{ fontSize: '0.82rem', color: '#9CA3AF', margin: 0 }}>
-          Monitoring Morocco's luxury digital nomad ecosystem
+          Supervision de l'écosystème de coliving premium au Maroc
         </p>
       </div>
 
@@ -32,7 +32,7 @@ const AdminTopBar: React.FC = () => {
           <Search size={14} color={focused ? '#DD7246' : '#9CA3AF'} />
           <input
             type="text"
-            placeholder="Search Listings or Hosts..."
+            placeholder="Rechercher des espaces ou des hôtes..."
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             style={{

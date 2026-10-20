@@ -43,7 +43,7 @@ const SearchHeader: React.FC<SearchHeaderProps> = ({ total, sortBy, onSortChange
           marginBottom: '8px',
         }}
       >
-        Authentic Moroccan Experiences
+        Expériences Marocaines Authentiques
       </h1>
       <p style={{ fontSize: '0.95rem', color: '#6B7280', marginBottom: '24px', lineHeight: 1.6 }}>
         Découvrez des espaces de coliving modernes et inspirants, conçus pour la communauté contemporaine au Maroc.

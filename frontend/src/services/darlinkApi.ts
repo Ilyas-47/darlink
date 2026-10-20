@@ -1,6 +1,9 @@
 import { API_BASE, authHeaders, clearAuthSession, setAuthSession } from '../config/api';
 
 async function parseError(res: Response): Promise<string> {
+  if (res.status === 401) {
+    clearAuthSession();
+  }
   try {
     const j = await res.json();
     const main =
@@ -134,9 +137,12 @@ export const darlinkApi = {
     adresse: string;
     lienGoogleMap?: string;
     regles?: string;
+    latitude?: number;
+    longitude?: number;
     equipementIds: number[];
     imageUrls: string[];
     chambres: Array<{
+      id?: number;
       nom: string;
       description?: string;
       capacitePersonnes: number;

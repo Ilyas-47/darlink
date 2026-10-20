@@ -12,7 +12,6 @@ import {
 
 import AdminSidebar, { type TabType } from '../../components/admin/AdminSidebar';
 import AdminTopBar from '../../components/admin/AdminTopBar';
-import AdminStatsCards from '../../components/admin/AdminStatsCards';
 import PendingVerifications from '../../components/admin/PendingVerifications';
 import AdminUsersTable from '../../components/admin/AdminUsersTable';
 import AdminDocuments from '../../components/admin/AdminDocuments';

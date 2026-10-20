@@ -45,7 +45,7 @@ const RecentMessages: React.FC<RecentMessagesProps> = ({ onGoToMessages }) => {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 18px', borderBottom: '1px solid #F0EDE8' }}>
         <h3 style={{ fontSize: '0.92rem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>
-          Recent Messages
+          Messages Récents
         </h3>
         {totalUnread > 0 && (
           <span style={{
@@ -53,7 +53,7 @@ const RecentMessages: React.FC<RecentMessagesProps> = ({ onGoToMessages }) => {
             borderRadius: '100px', padding: '2px 7px',
             fontSize: '0.65rem', fontWeight: 800,
           }}>
-            {totalUnread} new
+            {totalUnread} nouveau{totalUnread > 1 ? 'x' : ''}
           </span>
         )}
       </div>

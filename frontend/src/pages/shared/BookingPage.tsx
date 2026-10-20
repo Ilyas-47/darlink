@@ -14,12 +14,28 @@ export default function BookingPage() {
   const fromDate = searchParams.get('from');
   const toDate = searchParams.get('to');
 
+  const requestedRoomId = searchParams.get('room') ? parseInt(searchParams.get('room')!, 10) : null;
+
   const [property, setProperty] = useState<ColivingData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [checkIn, setCheckIn] = useState(fromDate || '2026-05-15');
-  const [checkOut, setCheckOut] = useState(toDate || '2026-06-15');
+  const getDefaultDates = () => {
+    const start = new Date();
+    start.setDate(start.getDate() + 1); // Demain
+    const end = new Date(start);
+    end.setDate(end.getDate() + 30); // 1 mois
+
+    const fmt = (d: Date) => d.toISOString().split('T')[0];
+    return {
+      checkIn: fromDate || fmt(start),
+      checkOut: toDate || fmt(end),
+    };
+  };
+
+  const initialDates = getDefaultDates();
+  const [checkIn, setCheckIn] = useState(initialDates.checkIn);
+  const [checkOut, setCheckOut] = useState(initialDates.checkOut);
   const [guests, setGuests] = useState(1);
 
   const [availableChambres, setAvailableChambres] = useState<
@@ -54,13 +70,31 @@ export default function BookingPage() {
     (async () => {
       const list = await colivingAPI.getAvailableChambres(property.id, checkIn, checkOut);
       if (cancelled) return;
-      setAvailableChambres(Array.isArray(list) ? list : []);
-      setSelectedChambreId(Array.isArray(list) && list.length ? list[0].id : null);
+
+      const fallbackList = property.chambres?.map((c) => ({
+        id: c.id,
+        nom: c.nom,
+        capacitePersonnes: c.capacitePersonnes,
+        prixParMois: c.prixParMois,
+      })) || [];
+
+      const finalList = Array.isArray(list) && list.length > 0 ? list : fallbackList;
+      setAvailableChambres(finalList);
+
+      if (finalList.length > 0) {
+        if (requestedRoomId && finalList.some((c) => c.id === requestedRoomId)) {
+          setSelectedChambreId(requestedRoomId);
+        } else {
+          setSelectedChambreId((prev) => (prev && finalList.some((c) => c.id === prev) ? prev : finalList[0].id));
+        }
+      } else {
+        setSelectedChambreId(null);
+      }
     })();
     return () => {
       cancelled = true;
     };
-  }, [property?.id, checkIn, checkOut, property]);
+  }, [property?.id, checkIn, checkOut, property, requestedRoomId]);
 
 
   const calculateNights = () => {

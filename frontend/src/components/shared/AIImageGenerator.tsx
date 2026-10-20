@@ -103,7 +103,7 @@ export default function AIImageGenerator({ onImageGenerated }: AIImageGeneratorP
             borderRadius: '100px',
             letterSpacing: '0.05em',
           }}>
-            POWERED BY AI
+            PROPULSÉ PAR L'IA
           </span>
         </div>
       </div>
@@ -124,7 +124,7 @@ export default function AIImageGenerator({ onImageGenerated }: AIImageGeneratorP
           onMouseOut={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
         >
           <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Wand2 size={14} /> Choisir un template
+            <Wand2 size={14} /> Choisir un modèle
           </span>
           <ChevronDown size={14} style={{ transform: showTemplates ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
         </button>
@@ -252,7 +252,7 @@ export default function AIImageGenerator({ onImageGenerated }: AIImageGeneratorP
         }}>
           <img
             src={generatedImage}
-            alt="Generated coliving space"
+            alt="Espace coliving généré"
             style={{ width: '100%', height: '240px', objectFit: 'cover', display: 'block' }}
           />
           <div style={{

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 const Stats: React.FC = () => {
   const stats = [
     { icon: Home, value: '150+', label: 'Propriétés', sub: 'Espaces disponibles' },
-    { icon: Users, value: '2 500+', label: 'Résidents', sub: 'Ont trouvé leur home' },
+    { icon: Users, value: '2 500+', label: 'Résidents', sub: 'Ont trouvé leur logement' },
     { icon: Star, value: '4.8/5', label: 'Note moyenne', sub: 'Avis vérifiés' },
     { icon: TrendingUp, value: '15+', label: 'Villes', sub: 'À travers le Maroc' },
   ];

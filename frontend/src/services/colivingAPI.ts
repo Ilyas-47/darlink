@@ -1,4 +1,4 @@
-import { API_BASE, authHeaders } from '../config/api';
+import { API_BASE, authHeaders, clearAuthSession } from '../config/api';
 
 export interface ColivingData {
   id: number;
@@ -108,7 +108,10 @@ export const colivingAPI = {
           nombrePersonnes,
         }),
       });
-      if (!response.ok) throw new Error('Erreur lors de la création de la réservation');
+      if (!response.ok) {
+        if (response.status === 401) clearAuthSession();
+        throw new Error('Erreur lors de la création de la réservation');
+      }
       return response.json();
     } catch (error) {
       console.error('Erreur API createReservation:', error);

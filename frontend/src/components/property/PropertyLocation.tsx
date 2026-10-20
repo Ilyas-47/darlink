@@ -60,7 +60,7 @@ const PropertyLocation: React.FC<PropertyLocationProps> = ({
   return (
     <section style={{ marginBottom: '32px' }}>
       <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1A1A2E', marginBottom: '16px' }}>
-        Where you'll be
+        Localisation
       </h2>
 
       {/* Map */}

@@ -206,24 +206,63 @@ export const getAvailableChambres = async (req: Request, res: Response) => {
     const dateDebutStr = typeof req.query.dateDebut === 'string' ? req.query.dateDebut : String(req.query.dateDebut);
     const dateFinStr = typeof req.query.dateFin === 'string' ? req.query.dateFin : String(req.query.dateFin);
 
-    const colivingIdNum = parseInt(colivingIdStr || '0');
-    const dateDebut = new Date(dateDebutStr || '');
-    const dateFin = new Date(dateFinStr || '');
+    const colivingIdNum = parseInt(colivingIdStr || '0', 10);
+    if (!colivingIdNum) {
+      return res.status(400).json({ error: 'Coliving ID manquant ou invalide' });
+    }
 
+    const dateDebut = dateDebutStr ? new Date(dateDebutStr) : null;
+    const dateFin = dateFinStr ? new Date(dateFinStr) : null;
+    const hasValidDates =
+      dateDebut &&
+      dateFin &&
+      !isNaN(dateDebut.getTime()) &&
+      !isNaN(dateFin.getTime()) &&
+      dateDebut < dateFin;
+
+    // Récupérer toutes les chambres avec leurs réservations actives
     const chambres = await prisma.chambre.findMany({
-      where: {
-        colivingId: colivingIdNum,
-        reservations: {
-          none: {
-            AND: [{ dateDebut: { lt: dateFin } }, { dateFin: { gt: dateDebut } }],
-          },
-        },
+      where: { colivingId: colivingIdNum },
+      include: {
+        reservations: hasValidDates
+          ? {
+              where: {
+                statut: { in: ['CONFIRMEE', 'EN_ATTENTE'] },
+                AND: [{ dateDebut: { lt: dateFin } }, { dateFin: { gt: dateDebut } }],
+              },
+            }
+          : false,
       },
     });
 
-    res.json(chambres);
+    if (!hasValidDates) {
+      return res.json(chambres);
+    }
+
+    // Filtrer les chambres disponibles en fonction de la capacité restante
+    const available = chambres.filter((ch) => {
+      const activeReservations = (ch as any).reservations || [];
+      if (activeReservations.length === 0) return true;
+
+      const totalBookedPersons = activeReservations.reduce(
+        (sum: number, r: any) => sum + (r.nombrePersonnes || 1),
+        0
+      );
+      const capacity = Math.max(ch.capacitePersonnes, ch.litsDisponibles, 1);
+
+      // Pour une chambre strictement privée pour 1 seule personne
+      if (ch.typeChambre === 'PRIVEE' && ch.capacitePersonnes <= 1) {
+        return activeReservations.length === 0;
+      }
+
+      // Pour les dortoirs et chambres multi-places, disponible tant que la capacité n'est pas atteinte
+      return totalBookedPersons < capacity;
+    });
+
+    // Retourner les chambres disponibles ou l'ensemble des chambres si disponible
+    res.json(available.length > 0 ? available : chambres);
   } catch (error) {
-    console.error('Erreur:', error);
-    res.status(500).json({ error: 'Erreur' });
+    console.error('Erreur getAvailableChambres:', error);
+    res.status(500).json({ error: 'Erreur lors de la recherche des chambres' });
   }
 };

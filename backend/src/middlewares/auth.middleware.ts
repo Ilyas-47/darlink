@@ -20,9 +20,14 @@ export const protect = (req: Request, res: Response, next: NextFunction) => {
     const decoded = verifyToken(token) as { id: number; role: string };
     req.user = decoded;
     return next();
-  } catch (error) {
-    console.error(error);
-    return res.status(401).json({ error: 'Non autorisé, token invalide' });
+  } catch (error: any) {
+    if (error?.name === 'TokenExpiredError') {
+      return res.status(401).json({
+        error: 'Session expirée, veuillez vous reconnecter',
+        code: 'TOKEN_EXPIRED',
+      });
+    }
+    return res.status(401).json({ error: 'Non autorisé, token invalide', code: 'TOKEN_INVALID' });
   }
 };
 

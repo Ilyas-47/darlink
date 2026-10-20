@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Home, Calendar,
-  DollarSign, BarChart3, Settings, LogOut, Users, FileText, Activity, FileCheck
+  DollarSign, Settings, LogOut, Users, FileText, Activity, FileCheck
 } from 'lucide-react';
 import { getStoredUser, clearAuthSession } from '../../config/api';
 import * as Tabs from '@radix-ui/react-tabs';

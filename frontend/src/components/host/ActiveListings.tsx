@@ -122,7 +122,7 @@ const ListingCard: React.FC<{ property: MyColiving; fallbackImg: string; onClick
 
         <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '10px', borderTop: '1px solid #F5F3F0' }}>
           <div>
-            <p style={{ fontSize: '0.65rem', color: '#9CA3AF', margin: '0 0 1px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Occupancy</p>
+            <p style={{ fontSize: '0.65rem', color: '#9CA3AF', margin: '0 0 1px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Occupation</p>
             <p style={{ fontSize: '0.9rem', fontWeight: 800, color: '#059669', margin: 0 }}>92%</p>
           </div>
           <div style={{ textAlign: 'right' }}>

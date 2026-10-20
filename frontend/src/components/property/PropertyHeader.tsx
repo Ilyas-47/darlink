@@ -124,7 +124,7 @@ const PropertyHeader: React.FC<PropertyHeaderProps> = ({
           style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #F0EDE8' }}
         />
         <div>
-          <p style={{ fontSize: '0.8rem', color: '#9CA3AF', margin: 0 }}>Hosted by</p>
+          <p style={{ fontSize: '0.8rem', color: '#9CA3AF', margin: 0 }}>Hébergé par</p>
           <p style={{ fontSize: '0.92rem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{hostName}</p>
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem', color: '#059669', fontWeight: 600 }}>
